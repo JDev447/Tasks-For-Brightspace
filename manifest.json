@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Tasks for Brightspace",
+  "version": "0.7.0",
+  "description": "A small weekly task panel with course progress rings for Brightspace.",
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["https://*/d2l/*", "http://*/d2l/*"],
+      "js": ["src/content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["src/panel.css"],
+      "matches": ["https://*/*", "http://*/*"]
+    }
+  ]
+}
