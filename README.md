@@ -15,6 +15,10 @@ A small, private browser extension that brings the useful part of **Tasks for Ca
 - right-column alignment against My Courses or Announcements
 - animated whole-widget collapse and clearer checkbox-versus-link hover behavior
 - incremental course-ring animation when a task is manually checked or unchecked
+- resilient inline shadow-root styling that survives unpacked-extension reloads
+- independently bounded Unfinished and Completed collapsible sections
+- fixed task-section headers with independently scrolling expanded lists
+- natural-height task sections capped at four visible assignments before scrolling
 - no account, server, analytics, ads, or unrelated features
 
 ## Install it locally
@@ -59,6 +63,3 @@ Nothing is sent off the Brightspace site.
 ## Next compatibility step
 
 This first build uses documented Brightspace APIs rather than scraping fragile page markup. Test it on your school's Brightspace dashboard. If a particular activity type is missing, capture the activity's title, type, and whether it appears in Brightspace's built-in **Work To Do** widget (do not share private course content). That will show whether it needs an additional quiz/assignment adapter or cannot be surfaced by the learner API.
-
-# Tasks-For-Brightspace
-Tasks for canvas extension remake for brightspace

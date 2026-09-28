@@ -27,13 +27,27 @@
   host.setAttribute("aria-label", "Tasks for Brightspace");
   const root = host.attachShadow({ mode: "open" });
 
-  const link = document.createElement("link");
-  link.rel = "stylesheet";
-  link.href = chrome.runtime.getURL("src/panel.css");
-  root.append(link);
+  // Keep the CSS inside the shadow root as text. A <link> to an unpacked
+  // extension resource can become invalid if the extension is reloaded while
+  // Brightspace remains open, leaving the widget as unstyled HTML.
+  const style = document.createElement("style");
+  root.append(style);
 
   const app = document.createElement("div");
+  app.hidden = true;
   root.append(app);
+
+  const stylesReady = (async () => {
+    try {
+      const response = await fetch(chrome.runtime.getURL("src/panel.css"), { cache: "no-store" });
+      if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+      style.textContent = await response.text();
+      return true;
+    } catch (error) {
+      console.warn("Tasks for Brightspace could not load its styles:", error);
+      return false;
+    }
+  })();
 
   function composedParent(element) {
     if (element.parentElement) return element.parentElement;
@@ -448,6 +462,24 @@
       void label.offsetWidth;
       label.classList.add("is-changing");
     }
+    requestAnimationFrame(sizeTaskLists);
+  }
+
+  function sizeTaskLists() {
+    app.querySelectorAll(".task-list").forEach((list) => {
+      const visibleRows = [...list.querySelectorAll(".task")]
+        .filter((row) => !row.classList.contains("is-filtered-out"));
+      const scrollable = visibleRows.length > 4;
+      list.classList.toggle("is-scrollable", scrollable);
+      if (!scrollable) {
+        list.style.maxHeight = "none";
+        return;
+      }
+      const fourRowsHeight = visibleRows
+        .slice(0, 4)
+        .reduce((height, row) => height + Math.max(row.scrollHeight, 52), 0);
+      list.style.maxHeight = `${fourRowsHeight + 6}px`;
+    });
   }
 
   function bind() {
@@ -497,6 +529,7 @@
       button.setAttribute("aria-expanded", String(expanded));
       button.querySelector(".chevron-icon")?.classList.toggle("is-expanded", expanded);
       state.sectionsExpanded[name] = expanded;
+      requestAnimationFrame(sizeTaskLists);
     }));
     app.querySelectorAll(".check").forEach((button) => button.addEventListener("click", async () => {
       const id = button.closest(".task").dataset.id;
@@ -514,9 +547,13 @@
       state.animateManualRing = false;
       state.ringAnimationFrom = new Map();
     }));
+    requestAnimationFrame(sizeTaskLists);
   }
 
   async function init() {
+    const styled = await stylesReady;
+    if (!styled) return;
+    app.hidden = false;
     const saved = await storageGet(["collapsed", "manualDone"]);
     state.collapsed = Boolean(saved.collapsed);
     state.manualDone = new Set(saved.manualDone || []);

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Tasks for Brightspace",
-  "version": "0.7.0",
+  "version": "0.11.0",
   "description": "A small weekly task panel with course progress rings for Brightspace.",
   "permissions": ["storage"],
   "content_scripts": [
