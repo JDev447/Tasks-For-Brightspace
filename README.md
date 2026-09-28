@@ -59,3 +59,6 @@ Nothing is sent off the Brightspace site.
 ## Next compatibility step
 
 This first build uses documented Brightspace APIs rather than scraping fragile page markup. Test it on your school's Brightspace dashboard. If a particular activity type is missing, capture the activity's title, type, and whether it appears in Brightspace's built-in **Work To Do** widget (do not share private course content). That will show whether it needs an additional quiz/assignment adapter or cannot be surfaced by the learner API.
+
+# Tasks-For-Brightspace
+Tasks for canvas extension remake for brightspace
